@@ -1,11 +1,19 @@
 package com.wipro.assessment;
 
+import android.app.ActionBar;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoader.getInstance().init(config);
         listView = (ListView) findViewById(R.id.listview);
         new GetDataTask().execute(url);
     }
@@ -67,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject result = new JSONObject(s);
                 String title = result.getString("title");
+                getSupportActionBar().setTitle(title);
                 JSONArray rows = result.getJSONArray("rows");
                 items = new ArrayList<Item>();
                 for (int i = 0; i < rows.length(); i++) {

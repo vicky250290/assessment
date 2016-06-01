@@ -2,12 +2,17 @@ package com.wipro.assessment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
@@ -18,12 +23,19 @@ public class LazyLoadAdapter extends BaseAdapter {
     private Activity activity;
     private List<Item> itemList;
     private static LayoutInflater inflater = null;
+    ImageLoader imageLoader;
+    DisplayImageOptions thumbnailoptions;
+    Bitmap noimage;
 
     public LazyLoadAdapter(Activity a, List<Item> itemsArray) {
         this.activity = a;
         inflater = (LayoutInflater) activity.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.itemList = itemsArray;
+        noimage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_noimg);
+        imageLoader = ImageLoader.getInstance();
+        thumbnailoptions = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_noimg).showImageOnFail(R.drawable.ic_noimg).cacheInMemory(true)
+                .resetViewBeforeLoading(true).build();
     }
 
     @Override
@@ -58,7 +70,13 @@ public class LazyLoadAdapter extends BaseAdapter {
 
         holder.titleView.setText(itemList.get(position).getTitle());
         holder.descriptionView.setText(itemList.get(position).getDescription());
-        //holder.imageView.setImageBitmap();
+        String imageUrl = itemList.get(position).getImageUrl();
+        if (imageUrl == null || imageUrl == "null") {
+            holder.imageView.setImageBitmap(noimage);
+        } else {
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(imageUrl, holder.imageView, thumbnailoptions);
+        }
         return vi;
     }
 
