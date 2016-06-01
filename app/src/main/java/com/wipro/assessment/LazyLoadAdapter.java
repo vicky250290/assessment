@@ -32,10 +32,10 @@ public class LazyLoadAdapter extends BaseAdapter {
         inflater = (LayoutInflater) activity.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.itemList = itemsArray;
-        noimage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_noimg);
-        imageLoader = ImageLoader.getInstance();
+        noimage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_noimg);//Image to display if there is no image url for a row
+        imageLoader = ImageLoader.getInstance();//Get singleton instance of ImageLoader
         thumbnailoptions = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_noimg).showImageOnFail(R.drawable.ic_noimg).cacheInMemory(true)
-                .resetViewBeforeLoading(true).build();
+                .resetViewBeforeLoading(true).build();//set Options for caching images
     }
 
     @Override
@@ -75,11 +75,12 @@ public class LazyLoadAdapter extends BaseAdapter {
             holder.imageView.setImageBitmap(noimage);
         } else {
             ImageLoader imageLoader = ImageLoader.getInstance();
-            imageLoader.displayImage(imageUrl, holder.imageView, thumbnailoptions);
+            imageLoader.displayImage(imageUrl, holder.imageView, thumbnailoptions);//method to load image into image view from cache or URL
         }
         return vi;
     }
 
+    //ViewHolder pattern to increase performance of listview
     public static class ViewHolder {
         public TextView titleView;
         public TextView descriptionView;
