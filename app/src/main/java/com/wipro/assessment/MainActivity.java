@@ -1,6 +1,9 @@
 package com.wipro.assessment;
 
 import android.app.ActionBar;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -48,13 +51,20 @@ public class MainActivity extends AppCompatActivity {
         ImageLoader.getInstance().init(config);
         listView = (ListView) findViewById(R.id.listview);
 
-        new GetDataTask().execute(url);//execute async task to load data from given url to listview
-
+        if (isNetworkConnected())
+            new GetDataTask().execute(url);//execute async task to load data from given url to listview
+        else {
+            Toast.makeText(this, "Please check your network connection", Toast.LENGTH_SHORT).show();
+        }
         //add listener for swipe to refresh
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new GetDataTask().execute(url);//execute async task again to reload data
+                if (isNetworkConnected())
+                    new GetDataTask().execute(url);//execute async task again to reload data
+                else {
+                    Toast.makeText(MainActivity.this, "Please check your network connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -116,4 +126,15 @@ public class MainActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
 }
